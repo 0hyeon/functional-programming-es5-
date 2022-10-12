@@ -92,6 +92,7 @@ var ages = _map(under_30, function (user) {
 console.log(ages);
 
 //위에코드 한번에쓰기
+
 console.log(
   "30대이상 이름수집",
   _map(
@@ -105,6 +106,42 @@ console.log(
 );
 console.log(
   "30대 미만 나이수집",
+  _map(
+    _filter(users, function (user) {
+      return user.age < 30;
+    }),
+    function (user) {
+      return user.age;
+    }
+  )
+);
+function _curryr(fn) {
+  //5 - 10 이라 표현력이 약간 안맞는것을 바로잡기위한 r(ight)함수
+  return function (a, b) {
+    //인자가 하나라면, 한번더인자를 받아와서 리턴을 미룸
+    return arguments.length == 2
+      ? fn(a, b)
+      : function (b) {
+          return fn(b, a);
+        };
+  };
+}
+
+var _get = _curryr(function (obj, key) {
+  return obj == null ? undefined : obj[key]; //obj[key] = users[0]["name"]
+});
+
+console.log(
+  "curry,get을 활용한, 이름수집",
+  _map(
+    _filter(users, function (user) {
+      return user.age >= 30;
+    }),
+    _get("name")
+  )
+);
+console.log(
+  "curry,get을 활용한,  나이수집",
   _map(
     _filter(users, function (user) {
       return user.age < 30;
