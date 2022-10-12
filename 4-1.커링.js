@@ -30,15 +30,32 @@ function _curryr(fn) {
         };
   };
 }
-
 var _get = _curryr(function (obj, key) {
   return obj == null ? undefined : obj[key]; //obj[key] = users[0]["name"]
 });
+
+// 리팩토링 보조함수1
+function _each(list, iter) {
+  for (var i = 0; i < list.length; i++) {
+    iter(list[i]);
+    //iter = new_list.push(mapper()
+  }
+  return list;
+}
+// function _map(list, mapper) {
+//   var new_list = [];
+//   for (var i = 0; i < list.length; i++) {
+//     new_list.push(mapper(list[i]));
+//   }
+//   return new_list;
+// }
+
+// _each를 적용한 _map함수 리팩토링1
 function _map(list, mapper) {
   var new_list = [];
-  for (var i = 0; i < list.length; i++) {
-    new_list.push(mapper(list[i]));
-  }
+  _each(list, function (val) {
+    new_list.push(mapper(val));
+  });
   return new_list;
 }
 //result
@@ -56,10 +73,27 @@ console.log(
   _map(
     _filter(users, function (user) {
       return user.age < 30;
-    }),
+    }), // return users[i].age < 30;
+
     // function (user) {
     //   return user.age;
     // }
-    _get("age")
+
+    _get("age") // _get('name') 의 결과는 함수입니다.
   )
 );
+//풀면
+function _filter(users, predi) {
+  var new_list = [];
+  for (var i = 0; i < users.length; i++) {
+    if (predi(users[i])) {
+      // -> users[i].age < 30
+      //중복되는 영역의 추상화의 단위를 함수를 이용하는것이 함수형 프로그래밍
+      new_list.push(users[i]);
+    }
+  }
+  return new_list;
+}
+// users[i].age < 30 = 대입
+
+//  predi(users[i])
